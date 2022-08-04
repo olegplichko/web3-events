@@ -4,6 +4,21 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Web3RSVP {
+    event NewEventCreated(
+        bytes32 eventID,
+        address creatorAddress,
+        uint256 eventTimestamp,
+        uint256 maxCapacity,
+        uint256 deposit,
+        string eventDataCID
+    );
+
+    event NewRSVP(bytes32 eventID, address attendeeAddress);
+
+    event ConfirmedAttendee(bytes32 eventID, address attendeeAddress);
+
+    event DepositPaidOut(bytes32 eventID);
+
     struct CreateEvent {
         bytes32 eventID;
         string eventDataCID;
@@ -16,6 +31,7 @@ contract Web3RSVP {
         bool paidOut;
     }
     mapping(bytes32 => CreateEvent) public idToEvent;
+    
     function createNewEvent(
         uint256 eventTimestamp,
         uint256 deposit,
@@ -48,6 +64,15 @@ contract Web3RSVP {
             claimedRSVPs,
             false
         );
+
+        emit NewEventCreated(
+            eventId,
+            msg.sender,
+            eventTimestamp,
+            maxCapacity,
+            deposit,
+            eventDataCID
+        );
     }
 
     function createNewRSVP(bytes32 eventId) external payable {
@@ -68,6 +93,8 @@ contract Web3RSVP {
             require(myEvent.confirmedRSVPs[i] != msg.sender, "ALREADY CONFIRMED");
         }
         myEvent.confiremdRSVPs.push(playable(msg.sender));
+
+        emit NewRSVP(eventId, msg.sender);
     }
 
     function confirmAttendee(bytes32 eventId, address attendee) public {
@@ -98,6 +125,8 @@ contract Web3RSVP {
         }
 
         require(sent, "Failed to sned Ether");
+
+        emit ConfirmedAttendee(eventId, attendee);
     }
 
     function confirmAllAttendees(bytes32 eventId) external {
@@ -131,5 +160,7 @@ contract Web3RSVP {
             myEvent.paidOut = false;
         }
         require(sent, "Failed to send Ether");
+
+        emit DepositPaidOut(eventId);
     }
 }
