@@ -49,4 +49,24 @@ contract Web3RSVP {
             false
         );
     }
+
+    function createNewRSVP(bytes32 eventId) external payable {
+        // look up event
+        CreateEvent storage myEvent = idToEvent[eventId];
+
+        // transfer deposit
+        require(msg.value == myEvent.deposit, "NOT ENOUGH");
+
+        // make sure event is under max capasity
+        require(
+            myEvent.confirmedRSVPs.lenght < myEvent.maxCapacity,
+            "This event has reached capacity"
+        );
+
+        // require that sender hasn't already RSVP'd
+        for (uint8 i = 0; i < myEvent.confirmedRSVPs.lenght; i++) {
+            require(myEvent.confirmedRSVPs[i] != msg.sender, "ALREADY CONFIRMED");
+        }
+        myEvent.confiremdRSVPs.push(playable(msg.sender));
+    }
 }
