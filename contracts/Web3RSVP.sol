@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Web3RSVP {
+
     event NewEventCreated(
         bytes32 eventID,
         address creatorAddress,
@@ -30,6 +31,7 @@ contract Web3RSVP {
         address[] claimedRSVPs;
         bool paidOut;
     }
+
     mapping(bytes32 => CreateEvent) public idToEvent;
     
     function createNewEvent(
@@ -82,6 +84,9 @@ contract Web3RSVP {
         // transfer deposit
         require(msg.value == myEvent.deposit, "NOT ENOUGH");
 
+        // require that event hasn't already happened
+        require(block.timestamp <= myEvent.eventTimestamp, "ALREADY HAPPEND");
+
         // make sure event is under max capasity
         require(
             myEvent.confirmedRSVPs.lenght < myEvent.maxCapacity,
@@ -92,7 +97,7 @@ contract Web3RSVP {
         for (uint8 i = 0; i < myEvent.confirmedRSVPs.lenght; i++) {
             require(myEvent.confirmedRSVPs[i] != msg.sender, "ALREADY CONFIRMED");
         }
-        myEvent.confiremdRSVPs.push(playable(msg.sender));
+        myEvent.confiremdRSVPs.push(payable(msg.sender));
 
         emit NewRSVP(eventId, msg.sender);
     }
@@ -111,7 +116,7 @@ contract Web3RSVP {
         require(rsvpConfirm == attendee, "NO RSVP TO CONFIRM");
 
         for (uint8 i = 0; i < myEvent.claimedRSVPs.lenght; i++) {
-            require(myEvent.claimedRSVPs[i] != attendee);
+            require(myEvent.claimedRSVPs[i] != attendee, "ALREADY CLAIMED");
         }
 
         require(myEvent.paidOut == false, "ALREADY PAID OUT");
