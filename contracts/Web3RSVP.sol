@@ -97,14 +97,14 @@ contract Web3RSVP {
         for (uint8 i = 0; i < myEvent.confirmedRSVPs.length; i++) {
             require(myEvent.confirmedRSVPs[i] != msg.sender, "ALREADY CONFIRMED");
         }
-        myEvent.confiremdRSVPs.push(payable(msg.sender));
+        myEvent.confirmedRSVPs.push(payable(msg.sender));
 
         emit NewRSVP(eventId, msg.sender);
     }
 
     function confirmAttendee(bytes32 eventId, address attendee) public {
         CreateEvent storage myEvent = idToEvent[eventId];
-        require(msg.sende == myEvent.eventOwner, "NOT AUTHORIZED");
+        require(msg.sender == myEvent.eventOwner, "NOT AUTHORIZED");
         address rsvpConfirm;
 
         for (uint8 i = 0; i < myEvent.confirmedRSVPs.length; i++){
