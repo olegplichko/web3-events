@@ -89,12 +89,12 @@ contract Web3RSVP {
 
         // make sure event is under max capasity
         require(
-            myEvent.confirmedRSVPs.lenght < myEvent.maxCapacity,
+            myEvent.confirmedRSVPs.length < myEvent.maxCapacity,
             "This event has reached capacity"
         );
 
         // require that sender hasn't already RSVP'd
-        for (uint8 i = 0; i < myEvent.confirmedRSVPs.lenght; i++) {
+        for (uint8 i = 0; i < myEvent.confirmedRSVPs.length; i++) {
             require(myEvent.confirmedRSVPs[i] != msg.sender, "ALREADY CONFIRMED");
         }
         myEvent.confiremdRSVPs.push(payable(msg.sender));
@@ -107,7 +107,7 @@ contract Web3RSVP {
         require(msg.sende == myEvent.eventOwner, "NOT AUTHORIZED");
         address rsvpConfirm;
 
-        for (uint8 i = 0; i < myEvent.confirmedRSVPs.lenght; i++){
+        for (uint8 i = 0; i < myEvent.confirmedRSVPs.length; i++){
             if(myEvent.confirmedRSVPs[i] == attendee) {
                 rsvpConfirm = myEvent.confirmedRSVPs[i];
             }
@@ -115,7 +115,7 @@ contract Web3RSVP {
 
         require(rsvpConfirm == attendee, "NO RSVP TO CONFIRM");
 
-        for (uint8 i = 0; i < myEvent.claimedRSVPs.lenght; i++) {
+        for (uint8 i = 0; i < myEvent.claimedRSVPs.length; i++) {
             require(myEvent.claimedRSVPs[i] != attendee, "ALREADY CLAIMED");
         }
 
@@ -138,7 +138,7 @@ contract Web3RSVP {
         CreateEvent memory myEvent = idToEvent[eventId];
         require(msg.sender == myEvent.eventOwner, "NOT AUTHORIZED");
 
-        for (uint8 i = 0; i < myEvent.confirmedRSVPs.lenght; i++){
+        for (uint8 i = 0; i < myEvent.confirmedRSVPs.length; i++){
             confirmAttendee(eventId, myEvent.confirmedRSVPs[i]);
         }
     }
@@ -155,7 +155,7 @@ contract Web3RSVP {
 
         require(msg.sender == myEvent.eventOwner, "MUST BE EVENT OWNER");
 
-        uint256 unclaimed = myEvent.confirmedRSVPs.lenght - myEvent.claimedRSVPs.lenght;
+        uint256 unclaimed = myEvent.confirmedRSVPs.length - myEvent.claimedRSVPs.length;
         uint256 payout = unclaimed * myEvent.deposit;
         
         myEvent.paidOut = true;
